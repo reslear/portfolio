@@ -74,7 +74,6 @@ margin: 0 auto;
 
 .content{
 	height: 400px;
-	overflow: hidden;
 	background: #fff;
 	box-shadow: 0 13px 77px 0 rgba(0,0,0,0.15);
 	border-radius: 5px;
@@ -95,10 +94,17 @@ input[type=number] {
 
 <script>
 import NavBar from '@/components/NavBar';
+import {getExchange} from '@/api';
+
 export default {
 	components: {NavBar},
 	mounted() {
-    	this.$store.dispatch('update');
-  	},
+		getExchange().then( data => {
+			this.$store.commit('currUpdate', data);
+		}).catch(error => {
+    		console.error(error.message);
+		});
+
+  	}
 }
 </script>

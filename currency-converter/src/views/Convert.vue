@@ -2,7 +2,7 @@
   <div>
 		 <div class="">
 		 	<div class="selector-wrap">
-				<cur-select :curr-array="currArray" :base="[1, base[1]]" @change-base="setBase" style="margin:0 auto"/>
+			 	<cur-select :curr-array="currArray" :selected="selected[1]" :favorite="favorite[1]" @change="setSelectedFav(1, $event)" style="margin:0 auto"/>
 			</div>
 			<div class="wrap-input">
 				<input type="number" v-model.number="value" class="convert-input" placeholder="Введите сумму..." />
@@ -13,10 +13,10 @@
 		
 		<div class="">
 	 		<div class="selector-wrap">
-				<cur-select :curr-array="currArray" :base="base" @change-base="setBase" style="margin:0 auto"/>
+				<cur-select :curr-array="currArray" :selected="selected[2]" :favorite="favorite[2]" @change="setSelectedFav(2, $event)" style="margin:0 auto"/>
 			</div>
 			<div class="output">
-				= {{ value * 2 }} USD
+				= {{ value * 2 }} {{selected[2]}}
 			</div>
 		</div>
 		
@@ -33,18 +33,20 @@ export default {
 	computed: {
 		...mapGetters([
 			'currArray',
-			'base'
+			'selected',
+			'favorite'
 		])
   	},
 	data: () => ({
-        options: ['list', 'of', 'options'],
 		value: '30'
 	}),
+	created(){
+	},
 	methods: {
-		setBase(arr) {
-			this.$store.commit('updateBase', arr)
-		}
-	}
+		setSelectedFav(id, obj) {
+			this.$store.commit('setSelectedFav', {id, ...obj});
+		},
+	},
 }
 </script>
 
@@ -71,7 +73,7 @@ export default {
 }
 
 .selector-wrap{
-	margin: 20px 0;
+	padding: 20px 0;
 }
 .output {
 	text-align: center;

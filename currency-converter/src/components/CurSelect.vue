@@ -1,9 +1,9 @@
 <template>
     <div class="cur-select">
 
-        <div :class="['cur-selected', {show}]" v-if="base" @click="show = !show">
-            <span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${selected.substr(0, 2)}.svg)`}"></span>    
-            <span class="title">{{ selected }}</span>
+        <div :class="['cur-selected', {show}]" v-if="active" @click="show = !show">
+            <span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${active.substr(0, 2)}.svg)`}"></span>    
+            <span class="title">{{ active }}</span>
             <svg  class="" viewBox="0 0 10 6" width="10" height="6" fill="#A7ADC6"><path d="M5 3.3L7.87.44A.8.8 0 019 1.57L5.52 5.01c-.3.3-.77.3-1.06 0L1.01 1.56A.8.8 0 012.14.43L5 3.3z"/></svg>
         </div>
 
@@ -24,46 +24,46 @@
 
 
 <script>
-import sortBy from 'lodash-es/sortBy';
-
 export default {
     props: {
         currArray: {
-            default: [],
+            default: () => ([]),
             type: Array
         },
-        base: {
-            default: [],
+        selected: {
+            default: '',
+            type: String
+        },
+        favorite: {
+           default: () => ([]),
             type: Array
-        },        
+        },
     },
     data: () => ({
-        show: false,
-        fav: ['BRL', 'USD'],
-
-       // selected: '',
-        
+        show: false,     
         items: [],
+        active: '',
+        active_fav: []
     }),
-    computed: {
-        selected: {
-            get() {
-                return this.base[1];
-            },
-            set(key){
-                this.$emit('change-base', [this.base[0], key]);
-            }
-        }
-    },
     methods: {
-        select(key){
-            this.selected = key; 
+        select(value){
+            this.$emit('change', {type: 'selected', value});
+            
             this.show = false;
+            this.active = value;
         },
         toggleFav(key){
 
-            const index = this.fav.indexOf(key);
-            if(index != -1) this.fav.splice(index, 1); else this.fav.push(key);
+            const index = this.active_fav.indexOf(key);
+
+            if(index != -1) {
+                this.active_fav.splice(index, 1); 
+            } else {
+                this.active_fav.push(key);
+            }
+
+            this.$emit('change', {type: 'favorite', value: this.active_fav});
+            this.renderItems();
         },
         toggleDropdown (e) {
             this.show = !this.show
@@ -75,17 +75,20 @@ export default {
         },
         renderItems(){
             let arr = this.currArray.map(obj => {
-                obj.fav = this.fav.includes(obj.key);
-                return obj;
-            });
+                return {...obj, fav: this.active_fav.includes(obj.key)};
+            }); 
 
-            this.items = sortBy(arr, ['fav']).reverse();         
+            arr.sort( (a, b) => a.fav ? -1 : 1);
+            this.items = arr;
         }
     },
     mounted() {
         document.addEventListener('click', this.close);
 
+        this.active_fav = this.favorite;
+
         this.renderItems();
+        this.active = this.selected ? this.selected : this.items[0].key;
     },
     beforeDestroy () {
         document.removeEventListener('click',this.close)
@@ -172,7 +175,7 @@ export default {
 .item:hover .title {color: #4256E8;}
 .item:hover .star {opacity:1;}
 
-.item .title{flex: 1;margin-right: auto;width: 24px;}
+.item .title{flex: 1;margin-right: auto;width: 30px;}
 .star{width:12px;height:12px;opacity:0;fill: var(--text-color-gray);}
 .star:hover, .star.fav{fill: #E5AA17; opacity: 1}
 </style>
