@@ -2,7 +2,7 @@
   <div>
 		 <div class="">
 		 	<div class="selector-wrap">
-			 	<cur-select :curr-array="currArray" :selected="selected[1]" :favorite="favorite[1]" @change="setSelectedFav(1, $event)" style="margin:0 auto"/>
+			 	<cur-select :data="data" :selected="selected[1]" :favorite="favorite[1]" @change="setSelectedFav(1, $event)" style="margin:0 auto"/>
 			</div>
 			<div class="wrap-input">
 				<input type="number" v-model.number="value" class="convert-input" placeholder="Введите сумму..." />
@@ -13,10 +13,10 @@
 		
 		<div class="">
 	 		<div class="selector-wrap">
-				<cur-select :curr-array="currArray" :selected="selected[2]" :favorite="favorite[2]" @change="setSelectedFav(2, $event)" style="margin:0 auto"/>
+				<cur-select :data="data" :selected="selected[2]" :favorite="favorite[2]" @change="setSelectedFav(2, $event)" style="margin:0 auto"/>
 			</div>
 			<div class="output">
-				= {{ value * 2 }} {{selected[2]}}
+			= {{ calculate }} {{selected[2]}}
 			</div>
 		</div>
 		
@@ -26,25 +26,31 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { mapFields } from 'vuex-map-fields';
+
 import CurSelect from '@/components/CurSelect'
+
 
 export default {
 	components: {CurSelect},
 	computed: {
-		...mapGetters([
-			'currArray',
+		...mapFields('app', [
+			'value',
 			'selected',
 			'favorite'
-		])
+		]),
+		...mapGetters('curr', ['data']),
+
+		calculate() {
+			const fromCurrency = this.data[this.selected[1]];
+			const toCurrency = this.data[this.selected[2]];
+
+			return ((1 / fromCurrency) * toCurrency * this.value).toFixed(2);
+		}
   	},
-	data: () => ({
-		value: '30'
-	}),
-	created(){
-	},
 	methods: {
 		setSelectedFav(id, obj) {
-			this.$store.commit('setSelectedFav', {id, ...obj});
+			this.$store.commit('app/setSelectedFav', {id, ...obj});
 		},
 	},
 }

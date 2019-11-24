@@ -19,6 +19,25 @@
 	</div>
 </template>
 
+
+<script>
+import NavBar from '@/components/NavBar';
+import {getExchange} from '@/api';
+
+export default {
+	components: {NavBar},
+	mounted() {
+		getExchange().then( data => {
+			this.$store.commit('curr/update', data);
+		}).catch(error => {
+    		console.error(error.message);
+		});
+
+  	}
+}
+</script>
+
+
 <style>
 .fade-enter-active,
 .fade-leave-active {
@@ -91,20 +110,3 @@ input[type=number] {
 }
 
 </style>
-
-<script>
-import NavBar from '@/components/NavBar';
-import {getExchange} from '@/api';
-
-export default {
-	components: {NavBar},
-	mounted() {
-		getExchange().then( data => {
-			this.$store.commit('currUpdate', data);
-		}).catch(error => {
-    		console.error(error.message);
-		});
-
-  	}
-}
-</script>

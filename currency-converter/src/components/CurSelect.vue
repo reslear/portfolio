@@ -7,14 +7,14 @@
             <svg  class="" viewBox="0 0 10 6" width="10" height="6" fill="#A7ADC6"><path d="M5 3.3L7.87.44A.8.8 0 019 1.57L5.52 5.01c-.3.3-.77.3-1.06 0L1.01 1.56A.8.8 0 012.14.43L5 3.3z"/></svg>
         </div>
 
-        <div v-show="show" v-if="items.length" class="dropdown">
-            <div v-for="(item, index) in items" class="item" :key="index"> 
+        <div v-show="show" v-if="Object.keys(items).length" class="dropdown">
+            <div v-for="(item, key) in items" class="item" :key="key"> 
                 <div class="item-content">
-                    <div class="left" @click="select(item.key)">
-                        <span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${item.key.substr(0, 2)}.svg)`}"></span>    
-                        <span class="title">{{ item.key }}</span>
+                    <div class="left" @click="select(key)">
+                        <span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${key.substr(0, 2)}.svg)`}"></span>    
+                        <span class="title">{{ key }}</span>
                     </div>
-                    <svg :class="['star', {'fav' : item.fav}]" @click="toggleFav(item.key)"><title>Добавить в избранное</title><use xlink:href="#star" /></svg>
+                    <svg :class="['star', {'fav' : isFav(key)}]" @click="toggleFav(key)"><title>Добавить в избранное</title><use xlink:href="#star" /></svg>
                 </div>
             </div>
         </div>
@@ -26,9 +26,9 @@
 <script>
 export default {
     props: {
-        currArray: {
-            default: () => ([]),
-            type: Array
+        data: {
+            default: () => ({}),
+            type: Object
         },
         selected: {
             default: '',
@@ -73,13 +73,15 @@ export default {
                 this.show = false
             }
         },
+        isFav(key){
+            return this.active_fav.includes(key);
+        },
         renderItems(){
-            let arr = this.currArray.map(obj => {
-                return {...obj, fav: this.active_fav.includes(obj.key)};
-            }); 
+            let sortedObj = Object.entries(this.data).sort(a => {
+                return this.isFav(a[0]) ? -1 : 1
+            });
 
-            arr.sort( (a, b) => a.fav ? -1 : 1);
-            this.items = arr;
+            this.items = Object.fromEntries(sortedObj);
         }
     },
     mounted() {

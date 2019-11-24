@@ -1,32 +1,49 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from "vuex-persistedstate";
+import { getField, updateField } from 'vuex-map-fields';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-	state: {
-		currArray: [],
-		selected: ['EUR', 'PLN', 'USD'],
-		favorite : [['EUR'], ['PLN'], ['USD']]
-	},
-	mutations: {
-		currUpdate(state, obj) {
 
-			let outArray = [];
+	modules: {
+		app: {
+			namespaced: true,
+			state: {
+				selected: ['EUR', 'PLN', 'USD'],
+				favorite : [['EUR'], ['PLN'], ['USD']],
+				value: '',
+			},			
+			mutations: {
+				updateField,
+				setSelectedFav: (state, obj) => {
+					Vue.set(state[obj.type], obj.id, obj.value);
+				},
+			},
+			getters: {
+				getField,
+			},	
+		},
+		curr: {
+			namespaced: true,
+			state: {
+				data: {} 
+			},
+			mutations: {
+				update(state, data) {
+					state.data = data;
+				}
+			},
+			getters: {
+				data: s => s.data,
+			}
+		}
+	},
+	plugins: [
 
-			Object.keys(obj).map(key => outArray.push({key, value: obj[key]}) );
-			state.currArray = outArray;
-		},
-		setSelectedFav: (state, obj) => {
-			Vue.set(state[obj.type], obj.id, obj.value);
-		},
-		
-	},
-	getters: {
-		currArray: s => s.currArray,
-		selected: s => s.selected,
-		favorite: s => s.favorite
-	},
-	plugins: [createPersistedState()]
+		...['app', 'curr'].map(name => createPersistedState({key: name, paths: [name]}))
+		// createPersistedState({key:'app', paths: ['app']}),
+		// createPersistedState({key:'app', paths: ['app']})
+	]
 })
