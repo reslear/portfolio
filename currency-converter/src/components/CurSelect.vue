@@ -11,7 +11,7 @@
             <div v-for="(item, key) in items" class="item" :key="key"> 
                 <div class="item-content">
                     <div class="left" @click="select(key)">
-                        <span class="flag" :style="{backgroundImage: `url(https://lipis.github.io/flag-icon-css/flags/4x3/${active.toLowerCase().substr(0, 2)}.svg)`}"></span>    
+                        <span class="flag" :style="{backgroundImage: `url(https://lipis.github.io/flag-icon-css/flags/4x3/${key.toLowerCase().substr(0, 2)}.svg)`}"></span>    
                         <span class="title">{{ key }}</span>
                     </div>
                     <svg :class="['star', {'fav' : isFav(key)}]" @click="toggleFav(key)"><title>Добавить в избранное</title><use xlink:href="#star" /></svg>
