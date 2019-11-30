@@ -4,7 +4,7 @@
         <div :class="['cur-selected', {show}]" v-if="active" @click="show = !show">
             <span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${active.substr(0, 2)}.svg)`}"></span>    
             <span class="title">{{ active }}</span>
-            <svg  class="" viewBox="0 0 10 6" width="10" height="6" fill="#A7ADC6"><path d="M5 3.3L7.87.44A.8.8 0 019 1.57L5.52 5.01c-.3.3-.77.3-1.06 0L1.01 1.56A.8.8 0 012.14.43L5 3.3z"/></svg>
+            <svg  class="arrow" viewBox="0 0 10 6" width="10" height="6" fill="#A7ADC6"><path d="M5 3.3L7.87.44A.8.8 0 019 1.57L5.52 5.01c-.3.3-.77.3-1.06 0L1.01 1.56A.8.8 0 012.14.43L5 3.3z"/></svg>
         </div>
 
         <div v-show="show" v-if="Object.keys(items).length" class="dropdown">
@@ -101,8 +101,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .cur-select{
+    font-size: 14px;
     width: 100px;
     position:relative;
 }
@@ -126,15 +127,6 @@ export default {
     opacity:1;
 }
 
-.flag {
-    border-radius:50%;
-    width:16px;
-    height:16px;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    opacity: .7;
-}
 .title {
     margin:0 8px;
     font-weight: bold;
@@ -180,4 +172,15 @@ export default {
 .item .title{flex: 1;margin-right: auto;width: 30px;}
 .star{width:12px;height:12px;opacity:0;fill: var(--text-color-gray);}
 .star:hover, .star.fav{fill: #E5AA17; opacity: 1}
+
+
+.arrow{
+    animation: arrow 3s linear infinite alternate;
+}
+
+@keyframes arrow {
+    0% {transform: translateY(1px)}		
+    50% {transform: translateY(-1px);}	
+    100% {transform: translateY(0px)}	
+}
 </style>

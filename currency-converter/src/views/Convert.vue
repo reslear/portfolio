@@ -25,9 +25,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import { mapFields } from 'vuex-map-fields';
-
 import CurSelect from '@/components/CurSelect'
 
 
@@ -39,13 +37,14 @@ export default {
 			'selected',
 			'favorite'
 		]),
-		...mapGetters('curr', ['data']),
+		...mapFields('curr', ['data']),
 
 		calculate() {
 			const fromCurrency = this.data[this.selected[1]];
 			const toCurrency = this.data[this.selected[2]];
-
-			return ((1 / fromCurrency) * toCurrency * this.value).toFixed(2);
+			
+			let result = ((1 / fromCurrency) * toCurrency * this.value);			
+			return parseFloat(result.toFixed(2)).toLocaleString();
 		}
   	},
 	methods: {
@@ -64,25 +63,23 @@ export default {
 	border: 0;
 	outline: 0;
 	font-size: 60px;
-	padding: 0 20px;
+	padding: 0 16px;
 	text-align: center;
 	box-sizing: border-box;
 	color:    var(--text-color-gray);
+	margin-bottom: 48px;
 }
 
 .convert-input::placeholder { 
 	color:    var(--text-color-gray);
 }
 
-.convert-line {
-	margin: 20px 0;
-}
-
 .selector-wrap{
-	padding: 20px 0;
+	padding: 48px 0 32px;
 }
 .output {
 	text-align: center;
 	font-size: 60px;
+	padding-bottom: 48px;
 }
 </style>

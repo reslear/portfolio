@@ -1,69 +1,103 @@
 <template>
-  <div>
-	  
-
-
-	  1 <img :src="`http://www.nbrb.by/i/flags/flags/4x3/${base[0].substr(0, 2)}.svg`" class="flag"> {{ base[0] }}
-	  <hr>
-	<div v-if="currArray" class="all">
-	  	<div v-for="(item, index) in currArray" class="item" :key="index">
-			<div><img :src="`http://www.nbrb.by/i/flags/flags/4x3/${item.key.substr(0, 2)}.svg`" class="flag"></div> 
-			<div class="name">{{item.key}}</div>
-			<div>–</div>
-			<div>{{ item.value.toFixed(2) }}</div>
+	<div class="current">
+		<div class="selector-wrap">
+			<cur-select :data="data" :selected="selected[0]" :favorite="favorite[0]" @change="setSelectedFav(0, $event)" style="margin:0 auto"/>
 		</div>
-	</div>
-	<div v-else>Загрузка ...</div>
+		<div class="eden">1 =</div>
+		<hr>
+		<div class="items">
+			<template v-for="(value, key) in data">		
+				<div class="item" v-if="key != selected[0]" :key="key">
+					<span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${key.substr(0, 2)}.svg)`}"></span>    
+					<span class="value">{{ fixNumbers(value) }}</span>
+					<span class="key">{{ key.toLowerCase() }}</span>
+				</div>
+			</template>
+		</div>
   </div>
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'
-import { mapGetters } from 'vuex';
+import {getExchange} from '@/api';
+import { mapFields } from 'vuex-map-fields';
+import CurSelect from '@/components/CurSelect'
 
 export default {
   	name: 'current',
+	components: {CurSelect},
+
   	computed: {
-		...mapGetters([
-			'currArray',
-			'base'	
-		])
+		...mapFields('app', [
+			'value',
+			'selected',
+			'favorite'
+		]),
+		...mapFields('curr', [
+			'data', 
+			'base'
+		]),
   	},
-  	components: {
-		HelloWorld
- 	}
+	created(){
+		this.changeSelect(this.selected[0]);
+	},
+	methods: {
+		setSelectedFav(id, obj) {
+			this.$store.commit('app/setSelectedFav', {id, ...obj});
+
+			if(obj.type == 'selected') this.changeSelect(obj.value);
+		},
+		fixNumbers(value){
+			return parseFloat(value.toFixed(2)).toLocaleString();
+		},
+		changeSelect(value){
+
+			getExchange(value).then( data => {
+				this.$store.commit('curr/update', data);
+			}).catch(error => {
+				console.error(error.message);
+			});
+		}
+	},
+
 }
 </script>
 
 <style scoped>
-.wrap-input {
+.selector-wrap{
+	padding-top: 48px;
+	padding-bottom: 24px;
+}
+.eden{
+	font-size: 60px;
+	font-weight: bold;
+	text-align: center;
+	padding: 0 0 48px;
 }
 
-.current-input{
-	display: block;
-	width:100%;
-	height: 50px;
+.items{
+	padding: 40px 0;
+	display: grid;
+  	grid-template-columns: repeat(3, 1fr);
+	grid-row-gap: 16px;
 }
 
-
-.all{
-	width:500px;
-	display: flex;
-	flex-wrap: wrap;
-	text-align: left;
+@media (max-width: 680px) {
+	.items{
+		grid-template-columns: 1fr 1fr;
+	}
 }
+
 .item {
-	width: 200px;
+	margin-left: 70px;
 	display: flex;
 }
-.name {
-	width: 40px;
+.item .value{
+	padding-left: 16px;
+	font-weight: bold;
+	font-size: 14px;
 }
-.item > div {
-	padding-left: 10px;
-}
-.flag {
-	border-radius: 3px;
-	height: 16px;
+
+.item .key{
+	padding-left: 8px
 }
 </style>

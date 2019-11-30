@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import { getField, updateField } from 'vuex-map-fields';
+import { stat } from 'fs';
 
 Vue.use(Vuex)
 
@@ -28,22 +29,21 @@ export default new Vuex.Store({
 		curr: {
 			namespaced: true,
 			state: {
-				data: {} 
+				data: {},
+				base: 'USD'
 			},
 			mutations: {
 				update(state, data) {
-					state.data = data;
+					state.data = data.rates;
+					state.base = data.base;
 				}
 			},
 			getters: {
-				data: s => s.data,
+				getField,
 			}
 		}
 	},
 	plugins: [
-
 		...['app', 'curr'].map(name => createPersistedState({key: name, paths: [name]}))
-		// createPersistedState({key:'app', paths: ['app']}),
-		// createPersistedState({key:'app', paths: ['app']})
 	]
 })
