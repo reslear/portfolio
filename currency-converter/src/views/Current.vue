@@ -9,7 +9,7 @@
 			<template v-for="(value, key) in data">		
 				<div class="item" v-if="key != selected[0]" :key="key">
 					<div class="item-content">
-						<span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${key.substr(0, 2)}.svg)`}"></span>    
+						<span class="flag" :style="{backgroundImage: `url(https://lipis.github.io/flag-icon-css/flags/4x3/${key.toLowerCase().substr(0, 2)}.svg)`}"></span>    
 						<span class="value">{{ fixNumbers(value) }}</span>
 						<span class="key">{{ key.toLowerCase() }}</span>
 					</div>

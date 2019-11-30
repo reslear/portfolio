@@ -2,7 +2,7 @@
     <div class="cur-select">
 
         <div :class="['cur-selected', {show}]" v-if="active" @click="show = !show">
-            <span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${active.substr(0, 2)}.svg)`}"></span>    
+            <span class="flag" :style="{backgroundImage: `url(https://lipis.github.io/flag-icon-css/flags/4x3/${active.toLowerCase().substr(0, 2)}.svg)`}"></span>    
             <span class="title">{{ active }}</span>
             <svg  class="arrow" viewBox="0 0 10 6" width="10" height="6" fill="#A7ADC6"><path d="M5 3.3L7.87.44A.8.8 0 019 1.57L5.52 5.01c-.3.3-.77.3-1.06 0L1.01 1.56A.8.8 0 012.14.43L5 3.3z"/></svg>
         </div>
@@ -11,7 +11,7 @@
             <div v-for="(item, key) in items" class="item" :key="key"> 
                 <div class="item-content">
                     <div class="left" @click="select(key)">
-                        <span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${key.substr(0, 2)}.svg)`}"></span>    
+                        <span class="flag" :style="{backgroundImage: `url(https://lipis.github.io/flag-icon-css/flags/4x3/${active.toLowerCase().substr(0, 2)}.svg)`}"></span>    
                         <span class="title">{{ key }}</span>
                     </div>
                     <svg :class="['star', {'fav' : isFav(key)}]" @click="toggleFav(key)"><title>Добавить в избранное</title><use xlink:href="#star" /></svg>

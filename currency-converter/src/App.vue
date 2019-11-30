@@ -124,7 +124,7 @@ input[type=number] {
 	padding: 16px 0;
 	text-align: center
 }
-.footer a {
+.footer > * {
 	font-size: 12px;
 }
 
