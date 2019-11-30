@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import { getField, updateField } from 'vuex-map-fields';
-import { stat } from 'fs';
+import {getExchange} from '@/api';
 
 Vue.use(Vuex)
 
@@ -40,6 +40,15 @@ export default new Vuex.Store({
 			},
 			getters: {
 				getField,
+			},
+			actions: {
+				update({ commit }, base = 'USD') {
+					getExchange(base).then( data => {
+						commit('update', data);
+					}).catch(error => {
+						console.error(error.message);
+					});
+				}
 			}
 		}
 	},

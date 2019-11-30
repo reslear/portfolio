@@ -10,7 +10,7 @@
 			</div>
 		</main>
 		<footer class="footer">
-			<a href="https://github.com/reslear" target="_blank" class="link">open source</a>
+			<a href="https://github.com/reslear/portfolio/tree/master/currency-converter" target="_blank" class="link">open source</a>
 			<span class="text">by ReSLeaR-</span>
 		</footer>
 
@@ -25,7 +25,6 @@
 
 <script>
 import NavBar from '@/components/NavBar';
-import {getExchange} from '@/api';
 
 export default {
 	components: {NavBar}
@@ -122,9 +121,11 @@ input[type=number] {
 }
 
 .footer{
-	font-size: 12px;
 	padding: 16px 0;
 	text-align: center
+}
+.footer a {
+	font-size: 12px;
 }
 
 a.link{

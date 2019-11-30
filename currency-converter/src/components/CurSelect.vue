@@ -96,7 +96,8 @@ export default {
         document.removeEventListener('click',this.close)
     },
     watch: {
-        'fav' : 'renderItems'
+        'fav' : 'renderItems',
+        'data' : 'renderItems',
     }
 }
 </script>
@@ -104,7 +105,7 @@ export default {
 <style scoped>
 .cur-select{
     font-size: 14px;
-    width: 100px;
+    display: inline-block;
     position:relative;
 }
 .cur-selected{
@@ -144,6 +145,7 @@ export default {
     border-radius: 3px;
     overflow-y: auto;
     max-height: 200px;
+    width: 150px;
 }
 
 .item .left, .item .star {
@@ -154,14 +156,14 @@ export default {
 .item .left{
     display: flex;
     align-items: center;
+    flex: 1;
 }
 .item:nth-child(even){
     background: rgba(0,0,0,.03);
 }
 
 .item-content{
-    display: inline-flex;
-    align-items: center;
+    display: flex;
 }
 .item .flag {opacity: 1}
 
@@ -169,18 +171,17 @@ export default {
 .item:hover .title {color: #4256E8;}
 .item:hover .star {opacity:1;}
 
-.item .title{flex: 1;margin-right: auto;width: 30px;}
+.item .title{margin-right: auto;}
 .star{width:12px;height:12px;opacity:0;fill: var(--text-color-gray);}
 .star:hover, .star.fav{fill: #E5AA17; opacity: 1}
 
 
 .arrow{
-    animation: arrow 3s linear infinite alternate;
+    animation: arrow 1s linear infinite ;
 }
 
 @keyframes arrow {
-    0% {transform: translateY(1px)}		
-    50% {transform: translateY(-1px);}	
-    100% {transform: translateY(0px)}	
+    0% {transform: translateY(-1px)}		
+    100% {transform: translateY(1px);}
 }
 </style>

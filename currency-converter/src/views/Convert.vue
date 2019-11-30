@@ -2,7 +2,7 @@
   <div>
 		 <div class="">
 		 	<div class="selector-wrap">
-			 	<cur-select :data="data" :selected="selected[1]" :favorite="favorite[1]" @change="setSelectedFav(1, $event)" style="margin:0 auto"/>
+			 	<cur-select :data="data" :selected="selected[1]" :favorite="favorite[1]" @change="setSelectedFav(1, $event)"/>
 			</div>
 			<div class="wrap-input">
 				<input type="number" v-model.number="value" class="convert-input" placeholder="Введите сумму..." />
@@ -13,7 +13,7 @@
 		
 		<div class="">
 	 		<div class="selector-wrap">
-				<cur-select :data="data" :selected="selected[2]" :favorite="favorite[2]" @change="setSelectedFav(2, $event)" style="margin:0 auto"/>
+				<cur-select :data="data" :selected="selected[2]" :favorite="favorite[2]" @change="setSelectedFav(2, $event)"/>
 			</div>
 			<div class="output">
 			= {{ calculate }} {{selected[2]}}
@@ -47,6 +47,11 @@ export default {
 			return parseFloat(result.toFixed(2)).toLocaleString();
 		}
   	},
+	created(){
+		if(!Object.keys(this.data).length) {
+			this.$store.dispatch('curr/update');
+		}
+	},
 	methods: {
 		setSelectedFav(id, obj) {
 			this.$store.commit('app/setSelectedFav', {id, ...obj});
@@ -55,7 +60,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .convert-input{
 	height:70px;
 	width: 100%;
@@ -68,6 +73,7 @@ export default {
 	box-sizing: border-box;
 	color:    var(--text-color-gray);
 	margin-bottom: 48px;
+	text-overflow: ellipsis
 }
 
 .convert-input::placeholder { 
@@ -76,8 +82,10 @@ export default {
 
 .selector-wrap{
 	padding: 48px 0 32px;
+	text-align: center;
 }
 .output {
+	word-wrap: break-word;
 	text-align: center;
 	font-size: 60px;
 	padding-bottom: 48px;

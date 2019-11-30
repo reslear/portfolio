@@ -8,9 +8,11 @@
 		<div class="items">
 			<template v-for="(value, key) in data">		
 				<div class="item" v-if="key != selected[0]" :key="key">
-					<span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${key.substr(0, 2)}.svg)`}"></span>    
-					<span class="value">{{ fixNumbers(value) }}</span>
-					<span class="key">{{ key.toLowerCase() }}</span>
+					<div class="item-content">
+						<span class="flag" :style="{backgroundImage: `url(http://www.nbrb.by/i/flags/flags/4x3/${key.substr(0, 2)}.svg)`}"></span>    
+						<span class="value">{{ fixNumbers(value) }}</span>
+						<span class="key">{{ key.toLowerCase() }}</span>
+					</div>
 				</div>
 			</template>
 		</div>
@@ -18,7 +20,6 @@
 </template>
 
 <script>
-import {getExchange} from '@/api';
 import { mapFields } from 'vuex-map-fields';
 import CurSelect from '@/components/CurSelect'
 
@@ -50,12 +51,7 @@ export default {
 			return parseFloat(value.toFixed(2)).toLocaleString();
 		},
 		changeSelect(value){
-
-			getExchange(value).then( data => {
-				this.$store.commit('curr/update', data);
-			}).catch(error => {
-				console.error(error.message);
-			});
+			this.$store.dispatch('curr/update', value);
 		}
 	},
 
@@ -66,6 +62,7 @@ export default {
 .selector-wrap{
 	padding-top: 48px;
 	padding-bottom: 24px;
+	text-align: center;
 }
 .eden{
 	font-size: 60px;
@@ -75,22 +72,34 @@ export default {
 }
 
 .items{
-	padding: 40px 0;
-	display: grid;
-  	grid-template-columns: repeat(3, 1fr);
-	grid-row-gap: 16px;
+	padding: 24px 16px 40px;
+	box-sizing: border-box;
+	display: flex;
+  	flex-wrap: wrap;
+}
+
+
+.item {
+	flex: 0 25%;
 }
 
 @media (max-width: 680px) {
-	.items{
-		grid-template-columns: 1fr 1fr;
+	.item{
+		flex: 0 33%;
+	}
+}
+@media (max-width: 420px) {
+	.item{
+		flex: 0 50%;
 	}
 }
 
-.item {
-	margin-left: 70px;
+.item-content{
 	display: flex;
+	padding-top: 16px;
+	padding-left: 20px;
 }
+
 .item .value{
 	padding-left: 16px;
 	font-weight: bold;
@@ -98,6 +107,7 @@ export default {
 }
 
 .item .key{
-	padding-left: 8px
+	padding-left: 8px;
+	font-variant-numeric: tabular-nums;
 }
 </style>
