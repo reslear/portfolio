@@ -1,24 +1,25 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: 'current',
-    component: () => import('../views/Current.vue')
+    path: "/",
+    name: "current",
+    component: () => import("../views/Current.vue")
   },
   {
-    path: '/convert',
-    name: 'convert',
-    component: () => import('../views/Convert.vue')
+    path: "/convert",
+    name: "convert",
+    component: () => import("../views/Convert.vue")
   }
-]
+];
 
 const router = new VueRouter({
+  mode: "history",
   base: process.env.BASE_URL,
   routes
-})
+});
 
-export default router
+export default router;
