@@ -1,18 +1,17 @@
 import { IGoodsData, INamesData } from '~/types'
 
-export const formatNames = (value: any) => {
-  if (!value) return []
+export const formatNames = (names: INamesData) => {
+  if (!names) return []
 
-  const data: INamesData = value
   let result = []
 
-  for (const [id, value] of Object.entries(data)) {
+  for (const [id, value] of Object.entries(names)) {
     let items = []
 
-    for (const [itemId, itemValue] of Object.entries(value.B)) {
+    for (const [itemId, item] of Object.entries(value.B)) {
       items.push({
         id: itemId,
-        name: itemValue.N,
+        name: item.N,
       })
     }
 
@@ -25,6 +24,8 @@ export const formatNames = (value: any) => {
 
   return result
 }
+
+/* 
 
 export const formatGoods = (value: any) => {
   let result = []
@@ -45,3 +46,4 @@ export const formatGoods = (value: any) => {
 
   return result
 }
+ */
