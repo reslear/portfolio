@@ -1,23 +1,9 @@
-# currency-converter
+## Currency Converter
 
-## Project setup
+<sub><sup>(Vue2, Vue cli, Vuex, Vue router)</sup></sub>
 
-```
-npm install
-```
+Currency converter with live rates for all currencies. Saves settings for next use.
 
-### Compiles and hot-reloads for development
-
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-
-```
-npm run build
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- ▶️ [Demo](https://reslear.github.io/packages/portfolio/currency-converter/dist/)
+- 📖 [Terms of reference](https://github.com/reslear/portfolio/tree/master/apps/currency-converter/tor)
+- 📦 [Source](https://github.com/reslear/portfolio/tree/master/apps/currency-converter)
