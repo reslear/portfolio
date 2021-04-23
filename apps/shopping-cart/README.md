@@ -20,3 +20,12 @@ with shopping cart functionality and live change currency support
 - @nuxtjs/composition-api
 - nuxt-typed-vuex
 - windicss
+
+### TODO
+
+- [x] api server
+- [x] get actual currency
+- [x] show catalog
+- [] cart functionality
+- [] updating price
+- [] deploy
