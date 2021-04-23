@@ -1,4 +1,4 @@
-## Shopping cart
+## 🛒 Shopping cart
 
 <!-- [Demo](https://reslear.github.io/demo/portfolio/examples/shopping-cart) -->
 
