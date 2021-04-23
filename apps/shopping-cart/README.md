@@ -26,6 +26,6 @@ with shopping cart functionality and live change currency support
 - [x] api server
 - [x] get actual currency
 - [x] show catalog
-- [] cart functionality
-- [] updating price
-- [] deploy
+- [ ] cart functionality
+- [ ] updating price
+- [ ] deploy
