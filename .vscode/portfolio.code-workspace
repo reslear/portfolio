@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "name": "💵 currency-converter",
+      "path": "../apps/currency-converter"
+    },
+    {
+      "name": "🛒 shopping-cart",
+      "path": "../apps/shopping-cart"
+    },
+    {
+      "name": "root",
+      "path": ".."
+    }
+  ],
+  "settings": {}
+}
