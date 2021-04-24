@@ -29,6 +29,7 @@ with shopping cart functionality and live change currency support
 - [ ] cart functionality
   - [x] store CRUD
   - [x] save to localstorage
+  - [x] two-binding change amount
   - [ ] sync with data
   - [ ] total price
 - [ ] refactor backend names

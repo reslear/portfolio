@@ -34,11 +34,51 @@
         <span class="text-black text-opacity-50">No items in the cart</span>
         <span>🙂</span>
       </div>
-      <div v-else>
-        <div v-for="(item, i) in cartItems" :key="i">
-          {{ item.name }} - {{ item.id }} {{ item.cid }} - {{ item.amount }}
-          <button @click="deleteFromCart(item.cid, item.id)">x</button>
-        </div>
+      <div v-else class="flex flex-col space-y-3 w-full overflow-x-auto">
+        <table class="cart-table border-collapse w-full">
+          <tbody>
+            <tr class="text-left">
+              <th>Product name</th>
+              <th>Amount</th>
+              <th>Price</th>
+              <th></th>
+            </tr>
+            <tr v-for="(item, i) in cartItems" :key="i">
+              <td width="50%">{{ item.name }}</td>
+              <td width="10%">
+                <input
+                  type="number"
+                  min="1"
+                  :value="item.amount"
+                  @change.prevent="cartSetAmount($event, item.cid, item.id)"
+                  class="bg-gray-100 rounded px-2 w-full"
+                />
+              </td>
+              <td>price</td>
+              <td class="text-right">
+                <button
+                  @click="deleteFromCart(item.cid, item.id)"
+                  class="transition hover:opacity-50"
+                  title="Remove item"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      d="M424 64h-88V48c0-26-22-48-48-48h-64c-26 0-48 22-48 48v16H88c-22 0-40 18-40 40v56c0 9 7 16 16 16h9l14 290c1 26 22 46 48 46h242c26 0 47-20 48-46l14-290h9c9 0 16-7 16-16v-56c0-22-18-40-40-40zM208 48c0-9 7-16 16-16h64c9 0 16 7 16 16v16h-96zM80 104c0-4 4-8 8-8h336c4 0 8 4 8 8v40H80zm313 361c0 8-7 15-16 15H135c-9 0-16-7-16-15l-14-289h302z"
+                    />
+                    <path
+                      d="M256 448c9 0 16-7 16-16V224a16 16 0 00-32 0v208c0 9 7 16 16 16zm80 0c9 0 16-7 16-16V224a16 16 0 00-32 0v208c0 9 7 16 16 16zm-160 0c9 0 16-7 16-16V224a16 16 0 00-32 0v208c0 9 7 16 16 16z"
+                    />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
   </div>
@@ -58,6 +98,7 @@ import Currency from '~/components/Currency.vue'
 import { formatPrice, getCurrency, exchangePrice } from '~/composable/currency'
 import { ICatalog } from '~/types'
 import { useAccessor } from '~/composable/store'
+import { debounce, isNumeric } from '~/utils'
 
 export default defineComponent({
   components: { Currency },
@@ -128,6 +169,18 @@ export default defineComponent({
       accessor.cart.delete({ id, cid })
     }
 
+    const cartSetAmount = (
+      event: { target: HTMLInputElement },
+      cid: string,
+      id: string
+    ) => {
+      const value = parseInt(event.target.value)
+
+      if (isNumeric(value)) {
+        accessor.cart.amount({ cid, id, amount: value })
+      }
+    }
+
     const cartItems = computed(() =>
       accessor.cart.items.map((item) => {
         return {
@@ -138,6 +191,7 @@ export default defineComponent({
     )
 
     return {
+      cartSetAmount: debounce(cartSetAmount, 300),
       deleteFromCart,
       cartItems,
       addToCart,
@@ -156,5 +210,9 @@ export default defineComponent({
 <style lang="postcss" scoped>
 .section-block {
   @apply bg-white shadow-2xl rounded-xl p-4 mb-8 mt-4;
+}
+.cart-table td,
+.cart-table th {
+  @apply pr-4 pb-2;
 }
 </style>
