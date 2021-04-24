@@ -27,5 +27,10 @@ with shopping cart functionality and live change currency support
 - [x] get actual currency
 - [x] show catalog
 - [ ] cart functionality
+  - [x] store CRUD
+  - [x] save to localstorage
+  - [ ] sync with data
+  - [ ] total price
+- [ ] refactor backend names
 - [ ] updating price
 - [ ] deploy
