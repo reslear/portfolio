@@ -17,6 +17,7 @@
               <div>
                 <button
                   class="border-1px border-gray-500 px-3 py-1 text-sm rounded-sm"
+                  @click="addToCart(`${cat.cid}`, `${item.id}`)"
                 >
                   Купить
                 </button>
@@ -28,7 +29,18 @@
     </section>
 
     <h2>Cart</h2>
-    <section class="section-block">123</section>
+    <section class="section-block">
+      <div v-if="!cartItems.length" class="text-center">
+        <span class="text-black text-opacity-50">No items in the cart</span>
+        <span>🙂</span>
+      </div>
+      <div v-else>
+        <div v-for="(item, i) in cartItems" :key="i">
+          {{ item.name }} - {{ item.id }} {{ item.cid }} - {{ item.amount }}
+          <button @click="deleteFromCart(item.cid, item.id)">x</button>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -40,18 +52,19 @@ import {
   computed,
   defineComponent,
   ssrRef,
-  defineAsyncComponent,
 } from '@nuxtjs/composition-api'
-import { DefaultDeserializer } from 'node:v8'
+
 import Currency from '~/components/Currency.vue'
 import { formatPrice, getCurrency, exchangePrice } from '~/composable/currency'
 import { ICatalog } from '~/types'
+import { useAccessor } from '~/composable/store'
 
 export default defineComponent({
   components: { Currency },
   props: {},
   setup() {
     const { $axios } = useContext()
+    const accessor = useAccessor()
 
     const source = ssrRef<ICatalog | null>(null)
     const currency = ssrRef(0)
@@ -64,7 +77,7 @@ export default defineComponent({
     const goods = computed(() => source.value?.goods.Value.Goods || [])
     const names = computed(() => source.value?.names || {})
 
-    const getName = (cid: number, id: number) => {
+    const getName = (cid: number | string, id: number | string) => {
       return names.value[cid]?.B[id]?.N || ''
     }
 
@@ -72,7 +85,7 @@ export default defineComponent({
       return names.value[cid]?.G
     }
 
-    const getPrice = (value: number) => {
+    const convertPrice = (value: number) => {
       return formatPrice(exchangePrice(value, currency.value))
     }
 
@@ -81,14 +94,16 @@ export default defineComponent({
     const catalog = computed(() => {
       let result: {
         [K: string]: {
-          items: { id: number; price: string; amount: number; name: string }[]
+          cid: number
           name: string
+          items: { id: number; price: string; amount: number; name: string }[]
         }
       } = {}
 
       for (let { G: cid, T: id, C: price, P: amount } of goods.value) {
         if (!result[cid]) {
           result[cid] = {
+            cid,
             name: getCatName(cid),
             items: [],
           }
@@ -97,7 +112,7 @@ export default defineComponent({
         result[cid].items.push({
           id,
           name: getName(cid, id),
-          price: getPrice(price),
+          price: convertPrice(price),
           amount,
         })
       }
@@ -105,38 +120,34 @@ export default defineComponent({
       return result
     })
 
-    // generate catalog three O(n*2)
-    // const catalog = computed(() => {
-    //   let result = []
+    const addToCart = (cid: string, id: string) => {
+      accessor.cart.add({ id, cid, amount: 1 })
+    }
 
-    //   for (let [catId, value] of Object.entries(names.value)) {
-    //     const items = []
+    const deleteFromCart = (cid: string, id: string) => {
+      accessor.cart.delete({ id, cid })
+    }
 
-    //     for (let [id, item] of Object.entries(value.B)) {
-    //       items.push({
-    //         id,
-    //         name: item.N,
-    //       })
-    //     }
-
-    //     result.push({
-    //       id: catId,
-    //       name: value.G,
-    //       items,
-    //     })
-    //   }
-
-    //   return result
-    // })
+    const cartItems = computed(() =>
+      accessor.cart.items.map((item) => {
+        return {
+          ...item,
+          name: getName(item.cid, item.id),
+        }
+      })
+    )
 
     return {
+      deleteFromCart,
+      cartItems,
+      addToCart,
       catalog,
       currency,
       currencyFormat,
       goods,
       names,
       getName,
-      getPrice,
+      convertPrice,
     }
   },
 })

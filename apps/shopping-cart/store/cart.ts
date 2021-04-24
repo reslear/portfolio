@@ -5,67 +5,107 @@ import {
   mutationTree,
   actionTree,
 } from 'typed-vuex'
-
 interface ICartItem {
-  id: number
-  cid: number
+  id: string
+  cid: string
   amount: number
 }
 type TCartItemIds = Pick<ICartItem, 'id' | 'cid'>
 
+type TCartItems = { [K: string]: number }
+
 let isNum = (n: any) => !isNaN(parseFloat(n)) && isFinite(n)
+const isPlainObj = (o: any) => typeof o == 'object' && o.constructor == Object
+
+const LOCAL_STORAGE_KEY = 'cart'
+const delimiterKey = '_'
+const parseKey = (key: string) => {
+  const [cid, id] = key.split(delimiterKey)
+  return { cid, id }
+}
+const printKey = (cid: string, id: string) => {
+  return cid + delimiterKey + id
+}
+
+const setStore = (items: TCartItems) => {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(items))
+}
 
 const getStorage = () => {
-  try {
-    const context: ICartItem[] = JSON.parse(localStorage.getItem('cart') || '')
+  if (!process.browser) return {}
 
-    if (!Array.isArray(context) || !context.length) {
-      return []
+  try {
+    const context: TCartItems = JSON.parse(
+      localStorage.getItem(LOCAL_STORAGE_KEY) || ''
+    )
+
+    if (!isPlainObj(context)) {
+      return {}
     }
 
-    const result: ICartItem[] = []
+    const result: TCartItems = {}
 
-    for (let { id, cid, amount } of context) {
-      if (isNum(id) && isNum(cid) && isNum(amount) && amount > 0) {
-        result.push({ id, cid, amount })
+    for (let [key, amount] of Object.entries(context)) {
+      const { cid, id } = parseKey(key)
+
+      if (cid && id && isNum(amount) && amount > 0) {
+        result[printKey(cid, id)] = amount
       }
     }
 
     return result
-  } catch (e) {}
-  return []
+  } catch (e) {
+    console.error(e)
+  }
+  return {}
 }
 
 export const state = () => ({
-  items: [] as ICartItem[],
+  items: {} as TCartItems,
 })
 
 export const getters = getterTree(state, {
-  getItemIndex: (state) => ({ id, cid }: TCartItemIds) =>
-    state.items.findIndex((item) => item.id === id && item.cid === cid),
+  items: (state) =>
+    Object.keys(state.items).map((key) => {
+      const { cid, id } = parseKey(key)
+      return { cid, id, amount: state.items[key] }
+    }),
 })
+
+interface ICartMPayload {
+  key: string
+  amount: number
+}
 
 export const mutations = mutationTree(state, {
-  SET_ITEMS(state, payload: ICartItem[]) {
-    state.items = payload
+  ADD_ITEM(state, p: ICartMPayload) {
+    Vue.set(state.items, p.key, p.amount)
   },
 
-  ADD_ITEM(state, { id, cid, amount = 1 }: ICartItem) {
-    state.items.push({ id, cid, amount })
+  DELETE_ITEM(state, p: Pick<ICartMPayload, 'key'>) {
+    Vue.delete(state.items, p.key)
   },
 
-  SET_FIELD(
-    state,
-    { index, key, value }: { index: number; key: string; value: any }
-  ) {
-    Vue.set(state.items[index], key, value)
-    return true
+  SET_ITEMS(state, items: TCartItems) {
+    state.items = items
   },
 
-  DELETE_ITEM(state, index: number) {
-    return !!state.items.splice(index, 1)
+  SET_AMOUNT(state, p: ICartMPayload) {
+    Vue.set(state.items, p.key, p.amount)
   },
 })
+
+const checkCartItem = (state: any, cid: string, id: string) => {
+  const key = printKey(cid, id)
+
+  if (!state.items[key]) {
+    return {}
+  }
+
+  return {
+    key,
+  }
+}
 
 export const actions = actionTree(
   { state, getters, mutations },
@@ -74,37 +114,43 @@ export const actions = actionTree(
       commit('SET_ITEMS', getStorage())
     },
 
-    add({ commit, getters }, { id, cid, amount }: ICartItem) {
-      const index = getters.getItemIndex({ id, cid })
-      if (index === -1) return false
+    save({ state }) {
+      setStore(state.items)
+    },
 
-      commit('ADD_ITEM', { id, cid, amount })
+    add({ commit, state, dispatch }, { id, cid, amount = 1 }: ICartItem) {
+      const key = printKey(cid, id)
+
+      if (!state.items[key] && isNum(amount)) {
+        commit('ADD_ITEM', { key, amount })
+        dispatch('save')
+      }
     },
 
     amount(
-      { state, commit, getters },
+      { state, commit, dispatch },
       { minus, id, cid }: ICartItem & { minus?: boolean }
     ) {
-      const index = getters.getItemIndex({ id, cid })
+      const { key } = checkCartItem(state, cid, id)
 
-      if (index === -1) return false
+      if (key) {
+        const amount = state.items[key]
+        const value = minus ? amount - 1 : amount + 1
 
-      const amount = state.items[index].amount
-      const value = minus ? amount - 1 : amount + 1
+        if (value < 1) return false
 
-      if (value < 1) return false
-
-      return commit('SET_FIELD', { index, key: 'amount', value })
+        commit('SET_AMOUNT', { amount, key })
+        dispatch('save')
+      }
     },
 
-    delete({ commit, getters }, { id, cid }: TCartItemIds) {
-      const index = getters.getItemIndex({ id, cid })
+    delete({ commit, state, dispatch }, { id, cid }: TCartItemIds) {
+      const { key } = checkCartItem(state, cid, id)
 
-      if (index === -1) {
-        return false
+      if (key) {
+        commit('DELETE_ITEM', { key })
+        dispatch('save')
       }
-
-      return commit('DELETE_ITEM', index)
     },
   }
 )
