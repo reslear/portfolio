@@ -6,12 +6,11 @@ import {
 } from 'typed-vuex'
 
 import { getCurrency, formatPrice } from '~/composable/currency'
+import * as cart from '~/store/cart'
 
 export const state = () => ({
   currency: 0 as number,
 })
-
-export type RootState = ReturnType<typeof state>
 
 export const getters = getterTree(state, {
   formatCurrency: (state) => formatPrice(state.currency),
@@ -33,6 +32,7 @@ export const actions = actionTree(
 
     async nuxtServerInit({ dispatch }) {
       await dispatch('getCurrency')
+      await dispatch('cart/init')
     },
   }
 )
@@ -42,5 +42,7 @@ export const accessorType = getAccessorType({
   getters,
   mutations,
   actions,
-  modules: {},
+  modules: {
+    cart,
+  },
 })
