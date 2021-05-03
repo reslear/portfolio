@@ -1,9 +1,6 @@
 import { NuxtConfig } from '@nuxt/types'
 
 const config: NuxtConfig = {
-  server: {
-    port: 3001,
-  },
   head: {
     title: 'Shopping cart',
     link: [
@@ -23,6 +20,11 @@ const config: NuxtConfig = {
   modules: ['@nuxtjs/axios'],
   serverMiddleware: ['~/api'],
   components: true,
+  build: {
+    babel: {
+      plugins: [['@babel/plugin-proposal-private-methods', { loose: true }]],
+    },
+  },
 }
 
 export default config
