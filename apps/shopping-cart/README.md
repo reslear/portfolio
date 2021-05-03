@@ -36,6 +36,6 @@ with shopping cart functionality and live change currency support
   - [x] two-binding change amount
   - [x] sync with data
   - [x] total price
-- [ ] refactor backend names
-- [ ] interval price updating
+- [x] interval price updating
+- [x] highlight price diff
 - [x] deploy
