@@ -18,7 +18,7 @@ with shopping cart functionality and live change currency support
 - @nuxt/typescript-build
 - @nuxtjs/axios
 - @nuxtjs/composition-api
-- nuxt-typed-vuex
+- typed-vuex
 - windicss
 
 ### TODO
