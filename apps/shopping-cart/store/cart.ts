@@ -14,8 +14,8 @@ export const state = () => ({
 })
 
 export const getters = getterTree(state, {
-  items: (state) =>
-    Object.keys(state.items).map((key) => {
+  items: state =>
+    Object.keys(state.items).map(key => {
       const { cid, id } = parseKey(key)
       return { cid, id, amount: state.items[key] }
     }),
@@ -73,7 +73,7 @@ export const actions = actionTree(
     delete({ commit, state, dispatch }, { id, cid }: TCartItemIds) {
       const key = printKey(cid, id)
 
-      if (!state.items[key]) {
+      if (state.items[key]) {
         commit('DELETE_ITEM', { key })
         dispatch('save')
       }
