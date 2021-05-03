@@ -1,6 +1,12 @@
 ## 🛒 Shopping cart
 
+![screenshot](screen.png)
+
+<center>
+
 📖 [Terms of reference](https://github.com/reslear/portfolio/tree/master/apps/shopping-cart/tor) | 📦 [Source](https://github.com/reslear/portfolio/tree/master/apps/shopping-cart) | 🚀 [Demo](https://shopping-cart-portfolio.herokuapp.com)
+
+</center>
 
 Catalog products with categories and subcategories,
 with shopping cart functionality and live change currency support
