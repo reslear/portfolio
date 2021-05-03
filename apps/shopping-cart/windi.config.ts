@@ -7,6 +7,9 @@ export default defineConfig({
       padding: {
         DEFAULT: '2rem',
       },
+      screens: {
+        lg: '1024px',
+      },
     },
 
     extend: {

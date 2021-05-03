@@ -1,11 +1,11 @@
 <template>
   <div class="pt-5">
-    <h2>Data</h2>
+    <h2>Goods</h2>
     <section class="section-block">
-      <div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+      <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
         <div v-for="(cat, i) in catalog" :key="i">
           <header>
-            <h1 class="bold text-xl">{{ cat.name }}</h1>
+            <h1 class="font-medium text-xl">{{ cat.name }}</h1>
           </header>
 
           <div class="flex flex-col mt-2 space-y-4">
@@ -18,13 +18,26 @@
                   getCartItem(`${cat.cid}`, `${item.id}`) >= item.amount,
               }"
             >
-              <div class="flex-1">{{ item.name }}</div>
+              <div class="flex-1 pl-4">
+                <div>{{ item.name }}</div>
+                <div class="text-opacity-70 text-black text-[12px] mt-2">
+                  <span>left</span>
+                  <span class="font-mono">{{
+                    getItemLeft(`${cat.cid}`, `${item.id}`, item.amount)
+                  }}</span>
+                </div>
+              </div>
 
               <div class="flex items-center space-x-3">
                 <div
-                  class="bg-gray-100 rounded py-1 px-2 font-mono text-[12px]"
+                  class="py-1 px-2 font-mono text-[12px] rounded"
+                  :class="{
+                    'bg-green-500': item.price > item.old_price,
+                    'bg-red-500': item.price < item.old_price,
+                    'bg-gray-100': item.price === item.old_price,
+                  }"
                 >
-                  <span>{{ item.price }}</span>
+                  <span>{{ convertPrice(item.price) }}</span>
                 </div>
 
                 <button
@@ -127,12 +140,14 @@ import {
   computed,
   defineComponent,
   ssrRef,
+  onMounted,
 } from '@nuxtjs/composition-api'
 
 import { formatPrice, getCurrency, exchangePrice } from '~/composable/currency'
 import { ICatalog, TCartItemIds } from '~/types'
 import { useAccessor } from '~/composable/store'
 import { debounce, isNumeric } from '~/utils'
+import { getRandomNumber } from '~/api/utils'
 
 export default defineComponent({
   props: {},
@@ -141,11 +156,39 @@ export default defineComponent({
     const accessor = useAccessor()
 
     const source = ssrRef<ICatalog | null>(null)
-    const currency = ssrRef(0)
+    const currency = computed(() => accessor.currency)
 
     useAsync(async () => {
       source.value = await $axios.$get('/api/v1/catalog')
-      currency.value = await getCurrency()
+    })
+
+    const refreshData = async () => {
+      console.log('refresh')
+      const data = await $axios.$get<ICatalog>('/api/v1/catalog?rand=1')
+
+      data.goods.Value.Goods.forEach(item => {
+        if (!source.value) return
+        const oldIndex = source.value?.goods.Value.Goods.findIndex(
+          o => o.G === item.G && item.T === o.T
+        )
+
+        if (oldIndex !== undefined) {
+          source.value.goods.Value.Goods[oldIndex].O =
+            source.value?.goods.Value.Goods[oldIndex].C
+          source.value.goods.Value.Goods[oldIndex].C = item.C
+        } else {
+          source.value.goods.Value.Goods.push(item)
+        }
+      })
+      accessor.SET_CURRENCY(getRandomNumber(20, 80))
+    }
+
+    onMounted(() => {
+      if (process.browser) {
+        setInterval(() => {
+          refreshData()
+        }, 15 * 1000)
+      }
     })
 
     const goods = computed(() => source.value?.goods.Value.Goods || [])
@@ -174,11 +217,23 @@ export default defineComponent({
         [K: string]: {
           cid: number
           name: string
-          items: { id: number; price: string; amount: number; name: string }[]
+          items: {
+            id: number
+            price: number
+            old_price: number
+            amount: number
+            name: string
+          }[]
         }
       } = {}
 
-      for (let { G: cid, T: id, C: price, P: amount } of goods.value) {
+      for (let {
+        G: cid,
+        T: id,
+        C: price,
+        P: amount,
+        O: old_price,
+      } of goods.value) {
         if (!result[cid]) {
           result[cid] = {
             cid,
@@ -190,7 +245,8 @@ export default defineComponent({
         result[cid].items.push({
           id,
           name: getName(cid, id),
-          price: convertPrice(price),
+          price,
+          old_price: old_price ?? price,
           amount,
         })
       }
@@ -245,7 +301,14 @@ export default defineComponent({
       convertPrice(accessor.cart.totalPrice(goods.value))
     )
 
+    const getItemLeft = (cid: string, id: string, amount: number) => {
+      const value = getCartItem(cid, id) || 0
+      const result = amount - value
+      return result
+    }
+
     return {
+      getItemLeft,
       totalPrice,
       getCartItem,
       cartSetAmount: debounce(cartSetAmount, 300),
@@ -265,6 +328,18 @@ export default defineComponent({
 </script>
 
 <style lang="postcss" scoped>
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .section-block {
   @apply bg-white shadow-2xl rounded-xl p-4 mb-8 mt-4;
 }

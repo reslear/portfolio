@@ -9,13 +9,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useContext } from '@nuxtjs/composition-api'
+import { computed, defineComponent, useContext } from '@nuxtjs/composition-api'
 import { useAccessor } from '~/composable/store'
 
 export default defineComponent({
   setup() {
     const accessor = useAccessor()
-    const currency = accessor.formatCurrency
+    const currency = computed(() => accessor.formatCurrency)
 
     return {
       currency,

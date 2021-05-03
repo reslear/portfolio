@@ -1,13 +1,15 @@
-import express from 'express'
+import express, { query } from 'express'
 import { ICatalog } from '~/types'
 import { getGoods, getNames } from './modules/catalog'
 
 const routes = express.Router()
 
 routes.get('/catalog', async (req, res) => {
+  const isRand = req.query.rand || false
+
   res.send({
     names: await getNames(),
-    goods: await getGoods(),
+    goods: await getGoods(!!isRand),
   } as ICatalog)
 })
 

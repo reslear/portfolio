@@ -1,8 +1,6 @@
 ## 🛒 Shopping cart
 
-<!-- [Demo](https://reslear.github.io/demo/portfolio/examples/shopping-cart) -->
-
-📖 [Terms of reference](https://github.com/reslear/portfolio/tree/master/apps/shopping-cart/tor) | 📦 [Source](https://github.com/reslear/portfolio/tree/master/apps/shopping-cart)
+📖 [Terms of reference](https://github.com/reslear/portfolio/tree/master/apps/shopping-cart/tor) | 📦 [Source](https://github.com/reslear/portfolio/tree/master/apps/shopping-cart) | 🚀 [Demo](https://shopping-cart-portfolio.herokuapp.com)
 
 Catalog products with categories and subcategories,
 with shopping cart functionality and live change currency support
@@ -32,6 +30,6 @@ with shopping cart functionality and live change currency support
   - [x] two-binding change amount
   - [x] sync with data
   - [x] total price
-- ? refactor backend names
-- [ ] updating price
-- [ ] deploy
+- [ ] refactor backend names
+- [ ] interval price updating
+- [x] deploy

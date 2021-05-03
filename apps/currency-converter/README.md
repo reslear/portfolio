@@ -1,7 +1,5 @@
 ## 💵 Currency Converter
 
-<sub><sup>(Vue2, Vue cli, Vuex, Vue router)</sup></sub>
-
 Currency converter with live rates for all currencies. Saves settings for next use.
 
 - ▶️ [Demo](https://reslear.github.io/packages/portfolio/currency-converter/dist/)

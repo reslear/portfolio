@@ -36,6 +36,9 @@ export interface IGoodsValueData {
   Pl: null
   /** id товара */
   T: number
+
+  /** старая цена **/
+  O?: number
 }
 
 export interface ICatalog {
