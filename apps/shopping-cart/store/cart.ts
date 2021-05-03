@@ -5,8 +5,14 @@ import {
   mutationTree,
   actionTree,
 } from 'typed-vuex'
-import { isNumeric } from '~/utils'
-import { ICartItem, ICartMPayload, TCartItemIds, TCartItems } from '~/types'
+import { isNumeric, hasKey } from '~/utils'
+import {
+  ICartItem,
+  ICartMPayload,
+  IGoodsValueData,
+  TCartItemIds,
+  TCartItems,
+} from '~/types'
 import { getStorage, parseKey, printKey, setStore } from '~/utils/localstorage'
 
 export const state = () => ({
@@ -19,6 +25,31 @@ export const getters = getterTree(state, {
       const { cid, id } = parseKey(key)
       return { cid, id, amount: state.items[key] }
     }),
+
+  item: state => (p: TCartItemIds) => {
+    const key = printKey(p.cid, p.id)
+    return state.items[key]
+  },
+
+  totalPrice: state => (goods: IGoodsValueData[]) => {
+    const arr = Object.keys(state.items)
+
+    let result = arr.reduce((acc, curr) => {
+      const { cid, id } = parseKey(curr)
+
+      const qty = state.items[curr]
+      const good = goods.find(item => `${item.G}` === cid && `${item.T}` === id)
+
+      if (good && good.P > 0) {
+        const price = good.C
+        return acc + price * qty
+      }
+
+      return acc
+    }, 0)
+
+    return result
+  },
 })
 
 export const mutations = mutationTree(state, {
@@ -53,16 +84,21 @@ export const actions = actionTree(
     add({ commit, state, dispatch }, { id, cid, amount = 1 }: ICartItem) {
       const key = printKey(cid, id)
 
-      if (!state.items[key] && isNumeric(amount)) {
+      if (!isNumeric(amount) || amount < 1) return false
+
+      if (hasKey(state.items, key)) {
+        commit('SET_AMOUNT', { key, amount: state.items[key] + amount })
+      } else {
         commit('ADD_ITEM', { key, amount })
-        dispatch('save')
       }
+
+      dispatch('save')
     },
 
     amount({ state, commit, dispatch }, { id, cid, amount }: ICartItem) {
       const key = printKey(cid, id)
 
-      if (state.items[key]) {
+      if (hasKey(state.items, key)) {
         if (amount < 1) return false
 
         commit('SET_AMOUNT', { key, amount })
@@ -73,7 +109,7 @@ export const actions = actionTree(
     delete({ commit, state, dispatch }, { id, cid }: TCartItemIds) {
       const key = printKey(cid, id)
 
-      if (state.items[key]) {
+      if (hasKey(state.items, key)) {
         commit('DELETE_ITEM', { key })
         dispatch('save')
       }

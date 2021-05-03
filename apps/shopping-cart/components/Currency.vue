@@ -1,10 +1,10 @@
 <template>
-  <div class="flex items-center space-x-2">
+  <div class="flex items-center space-x-2 text-[14px]">
     <img
       class="w-4 h-4 rounded-full object-cover"
       src="https://lipis.github.io/flag-icon-css/flags/4x3/us.svg"
     />
-    <div>1 USD - {{ currency }}</div>
+    <div>$1 - {{ currency }}</div>
   </div>
 </template>
 

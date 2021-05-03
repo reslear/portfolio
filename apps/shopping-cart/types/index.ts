@@ -51,9 +51,12 @@ export interface IOpenRatesData {
 
 export type TRates = 'EUR' | 'RUB' | 'USD'
 
+export type TGoodId = string
+export type TGoodCatId = string
+
 export interface ICartItem {
-  id: string
-  cid: string
+  id: TGoodId
+  cid: TGoodCatId
   amount: number
 }
 export type TCartItemIds = Pick<ICartItem, 'id' | 'cid'>

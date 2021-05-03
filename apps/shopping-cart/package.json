@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "nuxt dev"
+    "dev": "nuxt dev",
+    "heroku-postbuild": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -24,5 +25,8 @@
     "express": "^4.17.1",
     "nuxt": "^2.15.4",
     "nuxt-typed-vuex": "^0.2.0"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }

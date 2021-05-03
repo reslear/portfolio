@@ -14,3 +14,6 @@ export function debounce<T extends any[]>(
     }, timeout)
   }
 }
+
+export const hasKey = <T extends object>(obj: T, key: string) =>
+  Object.keys(obj).includes(key)

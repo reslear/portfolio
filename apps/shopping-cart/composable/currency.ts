@@ -1,5 +1,12 @@
 import axios from 'axios'
-import { IOpenRatesData, TRates } from '~/types'
+import {
+  IGoodsValueData,
+  IOpenRatesData,
+  TGoodCatId,
+  TGoodId,
+  TRates,
+} from '~/types'
+import { printKey } from '~/utils/localstorage'
 
 export const getCurrency = async (
   base: TRates = 'USD',

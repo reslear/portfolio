@@ -1,11 +1,15 @@
 <template>
-  <header class="bg-white shadow-xl fixed top-0 h-12 w-full">
+  <header
+    class="header bg-white shadow-xl fixed top-0 h-12 w-full z-100 bg-opacity-50"
+  >
     <div class="container flex h-full justify-between items-center">
-      <div class="flex space-x-4">
-        <nuxt-link to="/" class="link">Catalog</nuxt-link>
-        <nuxt-link to="/cart" class="link">Cart</nuxt-link>
+      <div class="flex space-x-4 items-center">
+        <span>🛒</span>
+        <span class="title">Shopping cart</span>
       </div>
-      <Currency />
+      <div class="flex">
+        <Currency />
+      </div>
     </div>
   </header>
 </template>
@@ -22,6 +26,14 @@ export default defineComponent({
 </script>
 
 <style lang="postcss" scoped>
+@import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap');
+.title {
+  font-family: 'Caveat Brush', cursive;
+  font-size: 24px;
+}
+.header {
+  backdrop-filter: saturate(180%) blur(10px);
+}
 .link {
   @apply text-black;
 }
