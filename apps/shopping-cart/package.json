@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "nuxt dev",
+    "build": "nuxt build",
     "heroku-postbuild": "npm run build"
   },
   "keywords": [],
