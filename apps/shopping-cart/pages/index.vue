@@ -11,8 +11,15 @@
           <div class="flex flex-col mt-2 space-y-2">
             <div v-for="(item, j) in cat.items" :key="j" class="flex space-x-2">
               <div class="flex-1">
-                id {{ item.id }} - {{ item.name }} - {{ item.price }} -
+                id {{ item.id }} - {{ item.name }} -
                 {{ item.amount }}
+              </div>
+              <div>
+                <div
+                  class="bg-gray-100 rounded py-1 px-2 font-mono text-[12px]"
+                >
+                  <span>{{ item.price }}</span>
+                </div>
               </div>
               <div>
                 <button
@@ -182,7 +189,7 @@ export default defineComponent({
     }
 
     const cartItems = computed(() =>
-      accessor.cart.items.map((item) => {
+      accessor.cart.items.map(item => {
         return {
           ...item,
           name: getName(item.cid, item.id),
